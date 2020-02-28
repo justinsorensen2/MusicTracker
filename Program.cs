@@ -9,7 +9,8 @@ namespace MusicTracker
 
     public static void Main(string[] args)
     {
-      Tracker.PopulateDb();
+      var tracker = new Tracker();
+      tracker.PopulateDb();
       Console.WriteLine("Welcome to C#");
 
     }
