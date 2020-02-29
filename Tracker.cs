@@ -318,6 +318,36 @@ namespace MusicTracker
         Console.WriteLine($"Release Date: {a.ReleaseDate} Band: {a.Band.BandName}");
       }
     }
+    public void ViewSongsInAlbum()
+    {
+      //create var for db access
+      var db = new DatabaseContext();
+      //create var for album list
+      var albumList = db.Albums.Where(a => a.ReleaseDate != null);
+      //display each item in list
+      foreach (var a in albumList)
+      {
+        Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Band: {a.Band.BandName}");
+      }
+      //ask user which album they want to view the song list for
+      Console.WriteLine($"Please enter the ID of the album for which you wish to view the song list.");
+      //create var from input then run verification
+      var albumInput = Console.ReadLine();
+      var verifiedAlbum = NumberVerification(albumInput, "album id");
+      //parse verified input
+      var albumId = int.Parse(verifiedAlbum);
+      //use album id to locate album
+      var album = db.Albums.First(a => a.Id == albumId);
+      //create song list from album.songs
+      var songList = album.Songs;
+      //display each item in list
+      foreach (var s in songList)
+      {
+        Console.WriteLine($"Album Title: {album.Title} Band: {s.Band.BandName} Song Title: {s.SongTitle}");
+        Console.WriteLine($"Song Length: {s.Length} Sample Lyrics: {s.Lyrics}");
+      }
+
+    }
     public void DisplayBands()
     {
       var db = new DatabaseContext();
