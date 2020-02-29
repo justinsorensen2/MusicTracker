@@ -310,7 +310,7 @@ namespace MusicTracker
       //create var for db access
       var db = new DatabaseContext();
       //create var for album list
-      var albumList = db.Albums.Where(a => a.ReleaseDate != null).OrderByDescending(a.ReleaseDate);
+      var albumList = db.Albums.Where(a => a.ReleaseDate != null);
 
       foreach (var a in albumList)
       {
@@ -443,15 +443,16 @@ namespace MusicTracker
           input = Console.ReadLine();
         }
         //check for common features of a URL
-        else if ((!input.Contains("://")) && (!input.Contains(".com") || !input.Contains(".net") || !input.Contains(".io")))
+        else if (Regex.IsMatch(input, @"(http|https|ftp)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z
+            0-9\-\._\?\,\'/\\\+&%\$#\=~])*", RegexOptions.IgnorePatternWhitespace) == true)
+        {
+          verifying = false;
+        }
+        else
         {
           Console.WriteLine($"That is not a valid {type}.");
           Console.WriteLine($"Please enter the {type}.");
           input = Console.ReadLine();
-        }
-        else
-        {
-          verifying = false;
         }
       }
       return input;
@@ -492,11 +493,10 @@ namespace MusicTracker
     public string SongLengthVerification(string input, string type)
     {
       var verifying = true;
-      var regexPattern = @"^[0-9]\d[0-9]\d{:}[0-9]\d[0-9]$";
       while (verifying)
       {
         //check for match to format
-        if (Regex.IsMatch(input, regexPattern, RegexOptions.IgnorePatternWhitespace))
+        if (Regex.IsMatch(input, @"^([0-9][0-9]|[2][0-3]):([0-5][0-9])$", RegexOptions.IgnorePatternWhitespace) == true)
         {
           verifying = false;
         }
