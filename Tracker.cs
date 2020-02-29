@@ -133,40 +133,22 @@ namespace MusicTracker
       //call method to offer to add songs to album
       AddSongsToAlbum(bandId, album);
     }
-    public void CancelBandContract()
+    public void AlterContract(bool signed, string type)
     {
       //set var to access db
       var db = new DatabaseContext();
       //ask user which band's contract to cancel
-      Console.WriteLine("Which band's contract will be cancelled?");
-      DisplayAllUnsigned();
+      Console.WriteLine($"Which band's contract will be {type}ed?");
+      DisplayAllSU(signed);
       //ask for ID of band from list
-      Console.WriteLine("Please enter the ID of the band whose contract you would like to cancel.");
-      //create var for user input then verify
-      var bandInput = Console.ReadLine();
-      var verifiedBand = NumberVerification(bandInput, "Band ID");
-      //parse verified string
-      var bandId = int.Parse(verifiedBand);
-      UpdateSigned(bandId, false, "canceled");
-
-
-    }
-    public void RenewBandContract()
-    {
-      //set var to access db
-      var db = new DatabaseContext();
-      //ask user which band's contract to cancel
-      Console.WriteLine("Which band's contract will be cancelled?");
-      DisplayAllSigned();
-      //ask for ID of band from list
-      Console.WriteLine("Please enter the ID of the band whose contract you would like to cancel.");
+      Console.WriteLine($"Please enter the ID of the band whose contract you would like to {type}.");
       //create var for user input then verify
       var bandInput = Console.ReadLine();
       var verifiedBand = NumberVerification(bandInput, "Band ID");
       //parse verified string
       var bandId = int.Parse(verifiedBand);
       //call method to select the band you want to sign
-      UpdateSigned(bandId, true, "renewed");
+      UpdateSigned(bandId, signed, type);
     }
     public void UpdateSigned(int bandId, bool signed, string type)
     {
@@ -183,30 +165,25 @@ namespace MusicTracker
       {
         band.IsSigned = true;
       }
-      Console.WriteLine($"{band.BandName}'s contract has been {type}.");
+      Console.WriteLine($"{band.BandName}'s contract has been {type}ed.");
+      db.SaveChanges();
+      Console.WriteLine($"Press Enter to return to the main menu.");
+      Console.ReadKey();
     }
-    public void DisplayAllSigned()
+    public void DisplayAllSU(bool signed)
     {
       //set var for db access
       var db = new DatabaseContext();
-      //set var for new list pulled from db showing signed bands
-      var signedList = db.Bands.Where(b => b.IsSigned == true);
+      //set var for new list pulled from db showing bands based on bool passed in
+      var signedList = db.Bands.Where(b => b.IsSigned == signed);
       foreach (var b in signedList)
       {
         Console.WriteLine($"ID: {b.Id} Band Name: {b.BandName} Contract is Current: {b.IsSigned}");
       }
+      Console.WriteLine($"Press Enter to continue.");
+      Console.ReadKey();
     }
-    public void DisplayAllUnsigned()
-    {
-      //set var for db access
-      var db = new DatabaseContext();
-      //set var for new list pulled from db showing signed bands
-      var signedList = db.Bands.Where(b => b.IsSigned == false);
-      foreach (var b in signedList)
-      {
-        Console.WriteLine($"ID: {b.Id} Band Name: {b.BandName} Contract is Current: {b.IsSigned}");
-      }
-    }
+
     public void AddSongsToAlbum(int bandId, Album album)
     {
       //ask if user would like to add songs to the album
@@ -297,26 +274,25 @@ namespace MusicTracker
       var bandId = int.Parse(verifiedBand);
       //create var for db access
       var db = new DatabaseContext();
-      //create var for album list
-      var albumList = db.Albums.Where(a => a.BandId == bandId);
-      foreach (var a in albumList)
+      foreach (var a in db.Albums.Where(a => a.BandId == bandId))
       {
         Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Contains Explicit Lyrics: {a.IsExplicit}");
-        Console.WriteLine($"Release Date: {a.ReleaseDate} Band: {a.Band.BandName}");
+        Console.WriteLine($"Release Date: {a.ReleaseDate}");
       }
+      Console.WriteLine($"Press Enter to return to the main menu.");
+      Console.ReadKey();
     }
     public void ViewAlbumsByDate()
     {
       //create var for db access
       var db = new DatabaseContext();
-      //create var for album list
-      var albumList = db.Albums.Where(a => a.ReleaseDate != null);
-
-      foreach (var a in albumList)
+      foreach (var a in db.Albums)
       {
         Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Contains Explicit Lyrics: {a.IsExplicit}");
-        Console.WriteLine($"Release Date: {a.ReleaseDate} Band: {a.Band.BandName}");
+        Console.WriteLine($"Release Date: {a.ReleaseDate}");
       }
+      Console.WriteLine($"Press Enter to return to the main menu.");
+      Console.ReadKey();
     }
     public void ViewSongsInAlbum()
     {
@@ -346,16 +322,20 @@ namespace MusicTracker
         Console.WriteLine($"Album Title: {album.Title} Band: {s.Band.BandName} Song Title: {s.SongTitle}");
         Console.WriteLine($"Song Length: {s.Length} Sample Lyrics: {s.Lyrics}");
       }
-
+      Console.WriteLine($"Press Enter to continue.");
+      Console.ReadKey();
     }
     public void DisplayBands()
     {
+      //set var for db access
       var db = new DatabaseContext();
-      var bandList = db.Bands.Where(b => b.BandName != null);
-      foreach (var b in bandList)
+      foreach (var b in db.Bands)
       {
-        Console.WriteLine($"ID:{b.Id} Band:{b.BandName}");
+        Console.WriteLine($"ID:{b.Id} Band:{b.BandName} Contract is Current: {b.IsSigned}");
+        Console.WriteLine($"Website: {b.Website} # of Members: {b.NumberOfMembers} Style: {b.Style}");
       }
+      Console.WriteLine($"Press Enter to continue.");
+      Console.ReadKey();
     }
     public DateTime DateVerification(string input, string type)
     {
