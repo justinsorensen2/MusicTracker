@@ -10,6 +10,8 @@ namespace MusicTracker.Models
     //navigation
     public int BandId { get; set; }
     public Band Band { get; set; }
+    public int AlbumId { get; set; }
+    public Album Album { get; set; }
 
   }
 }

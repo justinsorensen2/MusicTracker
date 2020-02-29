@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MusicTracker.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20200227190631_CreatedTablesAndNavigations")]
-    partial class CreatedTablesAndNavigations
+    [Migration("20200229212208_FreshDatabase")]
+    partial class FreshDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -90,7 +90,7 @@ namespace MusicTracker.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("AlbumId")
+                    b.Property<int>("AlbumId")
                         .HasColumnType("integer");
 
                     b.Property<int>("BandId")
@@ -128,9 +128,11 @@ namespace MusicTracker.Migrations
 
             modelBuilder.Entity("MusicTracker.Models.Song", b =>
                 {
-                    b.HasOne("MusicTracker.Models.Album", null)
+                    b.HasOne("MusicTracker.Models.Album", "Album")
                         .WithMany("Songs")
-                        .HasForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MusicTracker.Models.Band", "Band")
                         .WithMany()

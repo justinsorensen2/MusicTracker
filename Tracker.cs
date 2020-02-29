@@ -46,7 +46,8 @@ namespace MusicTracker
           Lyrics = "So far, or so it seems, all is lost with nothing fulfilled.",
           Length = "23:09",
           Genre = "Progressive Metal",
-          BandId = 1
+          BandId = 1,
+          AlbumId = 1
         };
         db.Songs.Add(song);
         db.SaveChanges();
@@ -227,9 +228,11 @@ namespace MusicTracker
           Length = verifiedLength,
           Genre = verifiedGenre,
           BandId = bandId,
+          AlbumId = album.Id
         };
         //add song to Album's list
         album.Songs.Add(song);
+        db.SaveChanges();
         //add song to db and commit
         db.Songs.Add(song);
         db.SaveChanges();
@@ -303,7 +306,7 @@ namespace MusicTracker
       //display each item in list
       foreach (var a in albumList)
       {
-        Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Band: {a.Band.BandName}");
+        Console.WriteLine($"ID: {a.Id} Album Title: {a.Title}");
       }
       //ask user which album they want to view the song list for
       Console.WriteLine($"Please enter the ID of the album for which you wish to view the song list.");

@@ -88,7 +88,7 @@ namespace MusicTracker.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("AlbumId")
+                    b.Property<int>("AlbumId")
                         .HasColumnType("integer");
 
                     b.Property<int>("BandId")
@@ -126,9 +126,11 @@ namespace MusicTracker.Migrations
 
             modelBuilder.Entity("MusicTracker.Models.Song", b =>
                 {
-                    b.HasOne("MusicTracker.Models.Album", null)
+                    b.HasOne("MusicTracker.Models.Album", "Album")
                         .WithMany("Songs")
-                        .HasForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MusicTracker.Models.Band", "Band")
                         .WithMany()

@@ -14,7 +14,5 @@ namespace MusicTracker.Models
     public Band Band { get; set; }
 
     public List<Song> Songs { get; set; } = new List<Song>();
-
-
   }
 }

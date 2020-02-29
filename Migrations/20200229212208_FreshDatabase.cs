@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MusicTracker.Migrations
 {
-    public partial class CreatedTablesAndNavigations : Migration
+    public partial class FreshDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,7 +61,7 @@ namespace MusicTracker.Migrations
                     Length = table.Column<string>(nullable: true),
                     Genre = table.Column<string>(nullable: true),
                     BandId = table.Column<int>(nullable: false),
-                    AlbumId = table.Column<int>(nullable: true)
+                    AlbumId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,7 +71,7 @@ namespace MusicTracker.Migrations
                         column: x => x.AlbumId,
                         principalTable: "Albums",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Songs_Bands_BandId",
                         column: x => x.BandId,
