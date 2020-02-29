@@ -139,6 +139,24 @@ namespace MusicTracker
       var db = new DatabaseContext();
       //ask user which band's contract to cancel
       Console.WriteLine("Which band's contract will be cancelled?");
+      DisplayAllUnsigned();
+      //ask for ID of band from list
+      Console.WriteLine("Please enter the ID of the band whose contract you would like to cancel.");
+      //create var for user input then verify
+      var bandInput = Console.ReadLine();
+      var verifiedBand = NumberVerification(bandInput, "Band ID");
+      //parse verified string
+      var bandId = int.Parse(verifiedBand);
+      UpdateSigned(bandId, false, "canceled");
+
+
+    }
+    public void RenewBandContract()
+    {
+      //set var to access db
+      var db = new DatabaseContext();
+      //ask user which band's contract to cancel
+      Console.WriteLine("Which band's contract will be cancelled?");
       DisplayAllSigned();
       //ask for ID of band from list
       Console.WriteLine("Please enter the ID of the band whose contract you would like to cancel.");
@@ -147,28 +165,47 @@ namespace MusicTracker
       var verifiedBand = NumberVerification(bandInput, "Band ID");
       //parse verified string
       var bandId = int.Parse(verifiedBand);
-      FindBand(bandId, true);
-
-
+      //call method to select the band you want to sign
+      UpdateSigned(bandId, true, "renewed");
     }
-    public void RenewBandContract()
+    public void UpdateSigned(int bandId, bool signed, string type)
     {
-
-    }
-    public void FindBand(int bandId, bool signed)
-    {
-      Console.WriteLine("What band ");
+      //set var to access db
+      var db = new DatabaseContext();
+      //use band id to locate the band
+      var band = db.Bands.First(b => b.Id == bandId);
+      //decide what to do based on bool passed in
+      if (signed == true)
+      {
+        band.IsSigned = false;
+      }
+      else
+      {
+        band.IsSigned = true;
+      }
+      Console.WriteLine($"{band.BandName}'s contract has been {type}.");
     }
     public void DisplayAllSigned()
     {
       //set var for db access
       var db = new DatabaseContext();
-
-
+      //set var for new list pulled from db showing signed bands
+      var signedList = db.Bands.Where(b => b.IsSigned == true);
+      foreach (var b in signedList)
+      {
+        Console.WriteLine($"ID: {b.Id} Band Name: {b.BandName} Contract is Current: {b.IsSigned}");
+      }
     }
     public void DisplayAllUnsigned()
     {
-
+      //set var for db access
+      var db = new DatabaseContext();
+      //set var for new list pulled from db showing signed bands
+      var signedList = db.Bands.Where(b => b.IsSigned == false);
+      foreach (var b in signedList)
+      {
+        Console.WriteLine($"ID: {b.Id} Band Name: {b.BandName} Contract is Current: {b.IsSigned}");
+      }
     }
     public void AddSongsToAlbum(int bandId, Album album)
     {
@@ -197,7 +234,7 @@ namespace MusicTracker
         Console.WriteLine("Your entry should be 5 characters in length(e.g. 03:15).");
         //set var based on input then run verification
         var lengthInput = Console.ReadLine();
-        var verifiedLength = LengthVerification(lengthInput, "song length");
+        var verifiedLength = SongLengthVerification(lengthInput, "song length");
         //ask for genre
         Console.WriteLine("Please enter the genre of the song.");
         //set var based on input then run verification
@@ -245,7 +282,42 @@ namespace MusicTracker
       db.Bands.Add(band);
       db.SaveChanges();
     }
+    public void ViewAlbumsPerBand()
+    {
+      //ask which
+      Console.WriteLine("Which band's albums would you like to view?");
+      //display all
+      DisplayBands();
+      //request user enter the ID
+      Console.WriteLine("Please enter the ID of the band whose albums you wish to view.");
+      //create var for user input then verify
+      var bandInput = Console.ReadLine();
+      var verifiedBand = NumberVerification(bandInput, "Band ID");
+      //parse verified string
+      var bandId = int.Parse(verifiedBand);
+      //create var for db access
+      var db = new DatabaseContext();
+      //create var for album list
+      var albumList = db.Albums.Where(a => a.BandId == bandId);
+      foreach (var a in albumList)
+      {
+        Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Contains Explicit Lyrics: {a.IsExplicit}");
+        Console.WriteLine($"Release Date: {a.ReleaseDate} Band: {a.Band.BandName}");
+      }
+    }
+    public void ViewAlbumsByDate()
+    {
+      //create var for db access
+      var db = new DatabaseContext();
+      //create var for album list
+      var albumList = db.Albums.Where(a => a.ReleaseDate != null).OrderByDescending(a.ReleaseDate);
 
+      foreach (var a in albumList)
+      {
+        Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Contains Explicit Lyrics: {a.IsExplicit}");
+        Console.WriteLine($"Release Date: {a.ReleaseDate} Band: {a.Band.BandName}");
+      }
+    }
     public void DisplayBands()
     {
       var db = new DatabaseContext();
@@ -387,25 +459,25 @@ namespace MusicTracker
       }
       return isSigned;
     }
-    public string LengthVerification(string input, string type)
+    public string SongLengthVerification(string input, string type)
     {
       var verifying = true;
       var regexPattern = @"^[0-9]\d[0-9]\d{:}[0-9]\d[0-9]$";
       while (verifying)
       {
+        //check for match to format
+        if (Regex.IsMatch(input, regexPattern, RegexOptions.IgnorePatternWhitespace))
+        {
+          verifying = false;
+        }
         //make sure input is not null
-        if (input == null)
+        else if (input == null)
         {
           Console.WriteLine($"That is not a valid {type}.");
           Console.WriteLine("Please enter the length of the song in the format: mm:ss");
           Console.WriteLine("Where mm is the number of minutes and ss is the number of seconds.");
           Console.WriteLine("Your entry should be 5 characters in length(e.g. 03:15).");
           input = Console.ReadLine();
-        }
-        //check for match to format
-        else if (Regex.IsMatch(input, regexPattern, RegexOptions.IgnorePatternWhitespace)
-        {
-          verifying = false;
         }
         else
         {
