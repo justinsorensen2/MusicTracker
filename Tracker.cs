@@ -286,7 +286,7 @@ namespace MusicTracker
     {
       //create var for db access
       var db = new DatabaseContext();
-      foreach (var a in db.Albums)
+      foreach (var a in db.Albums.OrderBy(Album => Album.ReleaseDate))
       {
         Console.WriteLine($"ID: {a.Id} Album Title: {a.Title} Contains Explicit Lyrics: {a.IsExplicit}");
         Console.WriteLine($"Release Date: {a.ReleaseDate}");
