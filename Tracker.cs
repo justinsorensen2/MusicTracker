@@ -79,7 +79,7 @@ namespace MusicTracker
       var verifiedStyle = InputVerification(styleInput, "style");
       Console.WriteLine("Is this band signed?");
       Console.WriteLine("Please enter yes(Y) or no(N).");
-      var signedInput = Console.ReadLine();
+      var signedInput = Console.ReadLine().ToUpper();
       var verifiedSigned = BoolVerification(signedInput, "entry");
       Console.WriteLine("Who is the Contact for this band?");
       Console.WriteLine("Please enter a name.");
