@@ -373,7 +373,7 @@ namespace MusicTracker
       while (verifying)
       {
         //make sure input is not null
-        if (input == null)
+        if (input == "")
         {
           Console.WriteLine($"That is not a valid {type}.");
           Console.WriteLine($"Please enter the {type}.");
